@@ -12,6 +12,11 @@ WORKDIR /server
 # Copy the server python files into the server directory
 COPY server.py /server
 COPY server_login.py /server
+COPY database.py /server
+
+COPY requirements.txt /server
+
+RUN pip install -r requirements.txt
 
 # Add C libraries
 RUN mkdir /clibs

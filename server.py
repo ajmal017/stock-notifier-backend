@@ -1,0 +1,24 @@
+import socket
+import sys
+import server_login
+
+def run_server():
+    server_lib = server_login.ServerLoginLibrary()
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('0.0.0.0', 8000)
+    sock.bind(server_address)
+    sock.listen(1)
+    while True:
+        connection, client_address = sock.accept()
+        s_bytes = connection.recv(128)
+        v_bytes = connection.recv(128)
+        A_bytes = connection.recv(128)
+        b_bytes, B_bytes = server_lib.generate_b(v_bytes)
+        connection.send(B_bytes)
+        m1_bytes, m2_bytes = server_lib.generate_ss(A_bytes, b_bytes, B_bytes, v_bytes)
+        mv = connection.recv(64)
+        connection.send(m2_bytes)
+        mv == m1_bytes
+
+if __name__ == "__main__":
+    run_server()

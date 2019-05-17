@@ -11,8 +11,6 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--disable-extensions")
 
-symbols = ["AMD", "INTL", "AMZN", "AAPL", "NVDA"]
-
 def getStockData(symbols):
     stockData = {}
     for sym in symbols:
@@ -69,7 +67,7 @@ def getStockData(symbols):
         
         stockData[sym] = {"Supports" : sups, "Resistances" : ress}
 
-    print(stockData)
+    return stockData
 
 """
 test_page = 'https://www.stockconsultant.com/consultnow/basicplus.cgi?symbol=AMD'

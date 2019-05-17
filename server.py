@@ -2,13 +2,24 @@ import socket
 import sys
 import server_login
 import scraper
+import database
 
 def run_server():
     print("Starting test")
 
-    scraper.getStockData(["AMD"])
+    symbols = ["AMD", "MSFT", "SQ"]
+    
+    stock_data = scraper.getStockData(symbols)
+    print(stock_data)
 
-    server_lib = server_login.ServerLoginLibrary()
+    user_tickers = database.getTickersFromUser('Aldaddy')
+    print(user_tickers)
+
+    try:
+        server_lib = server_login.ServerLoginLibrary()
+    except Exception:
+        return
+    
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_address = ('0.0.0.0', 8000)
     sock.bind(server_address)

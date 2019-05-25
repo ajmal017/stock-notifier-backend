@@ -13,8 +13,8 @@ chrome_options.add_argument("--disable-extensions")
 
 def getStockData(symbols):
     stockData = {}
+    driver = webdriver.Chrome(chrome_options=chrome_options)
     for sym in symbols:
-        driver = webdriver.Chrome(chrome_options=chrome_options)
         url = "https://www.stockconsultant.com/consultnow/basicplus.cgi?symbol=" + sym
         supports = []
         resistances = []
@@ -31,16 +31,14 @@ def getStockData(symbols):
                 ele = driver.find_element_by_xpath(ele_string)
                 text = ele.text
             except Exception:
-                print("Error on "+str(x))
-                continue
+                print("Error on "+str(x)+" on ticker "+sym)
+                break
                 
             if len(text) > 0 and text[0] == '-':
                 supports.append(text)
             elif len(text) > 0 and text[0] == '+':
                 resistances.append(text)
 
-        driver.close()
-        driver.quit()
 
         supnums = []
         resnums = []
@@ -67,6 +65,8 @@ def getStockData(symbols):
         
         stockData[sym] = {"Supports" : sups, "Resistances" : ress}
 
+    driver.close()
+    driver.quit()
     return stockData
 
 """
@@ -74,3 +74,7 @@ test_page = 'https://www.stockconsultant.com/consultnow/basicplus.cgi?symbol=AMD
 html_page = urllib2.urlopen(test_page)
 beaut_soup = BeautifulSoup(html_page, 'html.parser')
 """
+
+if __name__ == "__main__":
+    data = getStockData(["AMD", "NVDA", "INTL"])
+    print(data)

@@ -3,15 +3,16 @@ import sys
 import server_login
 import scraper
 import database
+import first_time
 
 def run_server():
     print("Starting test")
 
-    symbols = ["AMD", "MSFT", "SQ"]
+    symbols = first_time.tickers[:100]
     
     stock_data = scraper.getStockData(symbols)
     print(stock_data)
-
+"""
     for symbol, data in stock_data.items():
         database.updateSupports(symbol, [i[0] for i in data['Supports']])
         database.updateResistances(symbol, [i[0] for i in data['Resistances']])
@@ -41,6 +42,8 @@ def run_server():
         print("Login success :)")
     else:
         print("Login failure :(")
+"""
+
 
 if __name__ == "__main__":
     run_server()

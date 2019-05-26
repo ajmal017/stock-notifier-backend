@@ -12,6 +12,7 @@ chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--disable-extensions")
 
 def getStockData(symbols):
+    problems = open("not_working.txt", "w")
     stockData = {}
     driver = webdriver.Chrome(chrome_options=chrome_options)
     for sym in symbols:
@@ -32,6 +33,7 @@ def getStockData(symbols):
                 text = ele.text
             except Exception:
                 print("Error on "+str(x)+" on ticker "+sym)
+                problems.write(sym+"\n")
                 break
                 
             if len(text) > 0 and text[0] == '-':
@@ -40,6 +42,9 @@ def getStockData(symbols):
                 resistances.append(text)
 
 
+        if len(supports) is 0  and len(resistances) is 0:
+            continue;
+                
         supnums = []
         resnums = []
 

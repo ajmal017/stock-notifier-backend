@@ -11,14 +11,6 @@ RUN apt-get update && \
 # Set the working directory to /server
 WORKDIR /server
 
-# Copy the server python files into the server directory
-COPY server.py /server
-COPY server_login.py /server
-
-COPY requirements.txt /server
-
-RUN pip install -r requirements.txt
-
 # Add C libraries
 RUN mkdir /clibs
 
@@ -34,15 +26,8 @@ RUN cd /clibs/libsodium-1.0.16/ &&  ./configure --prefix=$HOME/.local && \
 
 ENV LD_LIBRARY_PATH "/root/.local/lib:$LD_LIBRARY_PATH"
 
-# Server Login
-RUN mkdir /clibs/server_login
-COPY server_login.cpp /clibs/server_login
-COPY server_login.h /clibs/server_login
-COPY Makefile /clibs/server_login
-RUN cd /clibs/server_login && make && echo $(ls) && mv server_lib.so /server
-
-# Make port 8099 available to the world outside this container
-EXPOSE 8000
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
 
 # Define environment variable
 ENV NAME World
@@ -62,9 +47,26 @@ RUN pip install selenium
 # set display port to avoid crash
 ENV DISPLAY=:99
 
+# server login
+RUN mkdir /clibs/server_login
+COPY server_login.cpp /clibs/server_login
+COPY server_login.h /clibs/server_login
+COPY Makefile /clibs/server_login
+RUN cd /clibs/server_login && make && echo $(ls) && mv server_lib.so /server
+
+COPY requirements.txt /server
+
+RUN pip install -r requirements.txt
+
 COPY database.py /server
 COPY scraper.py /server
+COPY http_handler.py /server
+COPY first_time.py /server
+
+# Copy the server python files into the server directory
+COPY server.py /server
+COPY server_login.py /server
 
 
 # Run server.py when the container launches
-CMD ["python", "server.py"]
+CMD ["python", "http_handler.py"]

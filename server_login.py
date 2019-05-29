@@ -5,7 +5,7 @@ class ServerLoginLibrary:
     __hexArray = "0123456789ABCDEF"
 
     def __init__(self):
-        self.server_lib = CDLL("/usr/local/lib/server_lib.so")
+        self.server_lib = CDLL("/server/server_lib.so")
         self.byte_size = 0
         self.hash_size = 0
         self.key_size = 0
@@ -33,10 +33,10 @@ class ServerLoginLibrary:
         n = (c_ubyte * self.key_size)()
         h = (c_ubyte * self.key_size)()
         self.server_lib.generate_b(v, b, B, n, h)
-        b_bytes = bytearray(b)
-        B_bytes = bytearray(B)
-        n_bytes = bytearray(n)
-        h_bytes = bytearray(h)
+        b_bytes = bytes(b)
+        B_bytes = bytes(B)
+        n_bytes = bytes(n)
+        h_bytes = bytes(h)
         return (b_bytes, B_bytes, n_bytes, h_bytes)
 
     def generate_sk(self, un, A_bytes, b_bytes, B_bytes, s_bytes, v_bytes):
@@ -51,9 +51,9 @@ class ServerLoginLibrary:
         m1 = (c_ubyte * self.hash_size)()
         m2 = (c_ubyte * self.hash_size)()
         self.server_lib.generate_sk(username, A, b, B, s, v, sk, m1, m2)
-        sk_bytes = bytearray(sk)
-        m1_bytes = bytearray(m1)
-        m2_bytes = bytearray(m2)
+        sk_bytes = bytes(sk)
+        m1_bytes = bytes(m1)
+        m2_bytes = bytes(m2)
         return (sk_bytes, m1_bytes, m2_bytes)
 
     def bytesToHex(self, data):

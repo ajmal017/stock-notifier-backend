@@ -1,0 +1,12 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Update": "false"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "5000"
+    }
+  ],
+    "Logging": "/tmp/sample-app"
+}

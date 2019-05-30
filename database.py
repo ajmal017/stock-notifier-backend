@@ -35,6 +35,80 @@ def newUser(username, loginData, tickers):
 #         b'6ghUn0TNggQla31n3c31uvgjJdLnage2KIoW1h3uyJ2QJpVRRZ11ue1z826WjPudIemUpzs7o84umeKFZFB34a18MfDpnNwqMSPf0xPgkWGt5i8oeWTWqho8bH1N4vFk'],
 #         ['AMD', 'MSFT', 'SQ'])
 
+def newSession(username, sessionID, a, b, b2, k):
+    col = db.users
+    sessions = getSessionsFromUser(username)
+    col.update_one(
+        {'username' : username},
+        {'$set' : 
+            {'sessions' : [sessions] + [{'sessionID' : sessionID,
+                                        'a' : a,
+                                        'b' : b,
+                                        'b2' : b2,
+                                        'k' : k}] if sessions is not None else 
+                                    [{'sessionID' : sessionID,
+                                        'a' : a,
+                                        'b' : b,
+                                        'b2' : b2,
+                                        'k' : k}] 
+            }
+        }
+    )
+
+def editSessionInts(username, sessionID, a, b, b2):
+    foundSessions = getSessionsFromUser(username)
+    if foundSessions:
+        for sessionDict in foundSessions:
+            if sessionDict['sessionID'] == sessionID:
+                sessionDict['a'] = a
+                sessionDict['b'] = b
+                sessionDict['b2'] = b2
+                return True
+    else:
+        return False
+    return False
+
+def editSessionKey(username, sessionID, k):
+    foundSessions = getSessionsFromUser(username)
+    if foundSessions:
+        for sessionDict in foundSessions:
+            if sessionDict['sessionID'] == sessionID:
+                sessionDict['k'] = k
+                return True
+    else:
+        return False
+    return False
+
+def getSessionInts(username, sessionID):
+    foundSessions = getSessionsFromUser(username)
+    if foundSessions:
+        for sessionDict in foundSessions:
+            if sessionDict['sessionID'] == sessionID:
+                return sessionDict
+    else:
+        return None
+    return None
+
+def getSessionK(username, sessionID):
+    foundSessions = getSessionsFromUser(username)
+    if foundSessions:
+        for sessionDict in foundSessions:
+            if sessionDict['sessionID'] == sessionID:
+                return sessionDict['k']
+    else:
+        return None
+    return None
+
+def getSessionsFromUser(username):
+    sessions = db.users.find(
+        {'username' : username}
+    )
+    try:
+        foundSessions = sessions.next()['sessions']
+    except:
+        return None
+    return foundSessions
+
 # adds tickers to a user's list of tickers
 # takes a string, and a list of string
 def addTickersToUser(username, tickers):
@@ -254,3 +328,5 @@ def getResistancesForTicker(symbol):
     )
     foundResistances = tickers.next()['resistances']
     return foundResistances
+
+newSession('Aldaddy', '2', '2', '3', '4', '5')

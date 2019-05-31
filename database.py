@@ -18,6 +18,8 @@ db=client.stockNotifier
 # set up a user in the database
 # takes a username, 3 128 byte fields for auth, and associated tickers
 def newUser(username, loginData, tickers):
+    if userExists(username):
+        return False
     user = {
         'username' : username,
         'loginData' : loginData,
@@ -28,12 +30,20 @@ def newUser(username, loginData, tickers):
         addUserToTicker(symbol, username)
     # print the object id; basically if this runs, it went through.
     print('Registered user with id: {0}'.format(result.inserted_id))
+    return True
 # below is a test use case for newUser, to see how it works.
 # newUser('Aldaddy',
 #         [b'9hXxIRiqbWvnMC9o3y22H39VoviqdAmrYdo48Mw0xEc4S89W34y8unbaf1boIfdyalyoI5P71ftnh2uJuPsHHHhP741JT4HpBduppRIO7XnT399tSugvNL1gmKeSzq40',
 #         b'jWGAOlw7Zgq12VRRa3Z56Tk8mWgdMFwi837XQBj6lcnUwaE5UKpqApxyT83ExcJ4gNhX0aj8ZXSq3R1wF8T0WsH2x3fLpxz9IKb50HoswIX7gwaaTjUNEjnnslDr4hqW',
 #         b'6ghUn0TNggQla31n3c31uvgjJdLnage2KIoW1h3uyJ2QJpVRRZ11ue1z826WjPudIemUpzs7o84umeKFZFB34a18MfDpnNwqMSPf0xPgkWGt5i8oeWTWqho8bH1N4vFk'],
 #         ['AMD', 'MSFT', 'SQ'])
+
+# returns None if user does not exist
+def userExists(username):
+    sessions = db.users.find(
+        {'username' : username}
+    )
+    return sessions
 
 def newSession(username, sessionID, a, b, b2, k):
     col = db.users
@@ -187,13 +197,14 @@ def deleteUser(username):
 # adds a new ticker to the tickers table
 # takes a string, and 3 lists of strings
 # for first time addition of a new ticker, users is expected to be an empty list
-def addTicker(symbol, name, supports, resistances, users):
+def addTicker(symbol, name, supports, resistances, users, last):
     ticker = {
         'symbol' : symbol,
         'name' : name,
         'supports' : supports,
         'resistances' : resistances,
-        'users' : users
+        'users' : users,
+        'last' : last
     }
     result = db.tickers.insert_one(ticker)
     # print the object id; basically if this runs, it went through.
@@ -202,10 +213,26 @@ def addTicker(symbol, name, supports, resistances, users):
 # addTicker(
 #     'AMD',
 #     'Advanced Micro Devices',
-#     ['20', '21'],
-#     ['30', '37'],
+#     ['(20,4)', '(21,2)'],
+#     ['(30,1)', '(37,5)'],
 #     ['Aldaddy']
 # )
+
+def setLast(symbol, price):
+    col = db.tickers
+    col.update_one(
+        {'symbol' : symbol},
+        {'$set' : 
+            {'last' : price}
+        }
+    )
+
+def getLast(symbol, price):
+    tickers = db.tickers.find(
+        {'symbol' : symbol}
+    )
+    foundPrice = tickers.next()['last']
+    return foundPrice
 
 # updates the supports in the tickers table
 # takes a symbol to be updates, and the new support levels as a list
@@ -310,6 +337,7 @@ def getTickers():
         del tickerDict['supports']
         del tickerDict['users']
         del tickerDict['_id']
+        del tickerDict['last']
     return listOfTickers
 # output can be tested with
 # pprint(getTickers())
@@ -329,4 +357,7 @@ def getResistancesForTicker(symbol):
     foundResistances = tickers.next()['resistances']
     return foundResistances
 
-newSession('Aldaddy', '2', '2', '3', '4', '5')
+def getRecordForTicker(symbol):
+    return db.tickers.find(
+        {'symbol' : symbol}
+    )

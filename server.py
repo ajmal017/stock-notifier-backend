@@ -71,6 +71,9 @@ class BackendServer:
             if 'k' in session:
                 return True
         return False
+
+    def get_tickers(self):
+        return database.getTickers()
     
 
 def run_server():

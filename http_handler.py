@@ -4,10 +4,6 @@ from server import BackendServer
 app = Flask(__name__)
 server = BackendServer()
 
-@app.route('/')
-def root():
-    return 'Hello, World!'
-
 @app.route('/register', methods=['GET', 'POST'])
 def registration_handler():
     throw_if_invalid_request(request, ['username', 'user_salt', 'user_verifier'])
@@ -46,6 +42,25 @@ def login_get_m2_handler():
     content = request.get_json()
     m2 = server.validate_user_session(content['username'], content['m2'], content['hnonce'])
     return jsonify({'m2': m2})
+
+@app.route('/all_tickers')
+def get_all_tickers():
+    return jsonify(server.get_tickers())
+
+@app.route('/user_tickers')
+def get_user_tickers():
+    throw_if_invalid_request(request, ['username'])
+    return jsonify({'s': 's'})
+
+@app.route('/add_ticker')
+def add_user_to_ticker():
+    throw_if_invalid_request(request, ['username', 'tickers'])
+    return jsonify({'s': 's'})
+
+@app.route('/delete_ticker')
+def remove_user_from_ticker():
+    throw_if_invalid_request(request, ['username', 'tickers'])
+    return jsonify({'s': 's'})
 
 @app.errorhandler(Exception)
 def exception_handler(e):

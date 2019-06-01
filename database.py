@@ -51,7 +51,7 @@ def newSession(username, sessionID, a, b, b2, k, deviceID):
     col.update_one(
         {'username' : username},
         {'$set' : 
-            {'sessions' : [sessions] + [{'sessionID' : sessionID,
+            {'sessions' : sessions + [{'sessionID' : sessionID,
                                         'a' : a,
                                         'b' : b,
                                         'b2' : b2,
@@ -64,6 +64,23 @@ def newSession(username, sessionID, a, b, b2, k, deviceID):
                                         'k' : k,
                                         'device' : deviceID}] 
             }
+        }
+    )
+def deleteSession(username, sessionID):
+    currentSessions = getSessionsFromUser(username)
+    if currentSessions is None:
+        return
+    session = None
+    for sessionDict in currentSessions:
+        if sessionDict['sessionID'] == sessionID:
+            session = sessionDict
+    if session is None:
+        return
+    col = db.users
+    col.update_one(
+        {'username' : username},
+        {'$set' : 
+            {'sessions' : list(set(currentSessions) - set(session))}
         }
     )
 

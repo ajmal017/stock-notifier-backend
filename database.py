@@ -45,7 +45,7 @@ def userExists(username):
     )
     return sessions.count() > 0
 
-def newSession(username, sessionID, a, b, b2, k):
+def newSession(username, sessionID, a, b, b2, k, deviceID):
     col = db.users
     sessions = getSessionsFromUser(username)
     col.update_one(
@@ -55,12 +55,14 @@ def newSession(username, sessionID, a, b, b2, k):
                                         'a' : a,
                                         'b' : b,
                                         'b2' : b2,
-                                        'k' : k}] if sessions is not None else 
+                                        'k' : k,
+                                        'device': deviceID}] if sessions is not None else 
                                     [{'sessionID' : sessionID,
                                         'a' : a,
                                         'b' : b,
                                         'b2' : b2,
-                                        'k' : k}] 
+                                        'k' : k,
+                                        'device' : deviceID}] 
             }
         }
     )

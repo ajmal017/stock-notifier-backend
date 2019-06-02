@@ -38,30 +38,49 @@ def newUser(username, loginData, tickers):
 #         b'6ghUn0TNggQla31n3c31uvgjJdLnage2KIoW1h3uyJ2QJpVRRZ11ue1z826WjPudIemUpzs7o84umeKFZFB34a18MfDpnNwqMSPf0xPgkWGt5i8oeWTWqho8bH1N4vFk'],
 #         ['AMD', 'MSFT', 'SQ'])
 
-# returns None if user does not exist
+# returns True if exists else false
 def userExists(username):
     sessions = db.users.find(
         {'username' : username}
     )
-    return sessions
+    return sessions.count() > 0
 
-def newSession(username, sessionID, a, b, b2, k):
+def newSession(username, sessionID, a, b, b2, k, deviceID):
     col = db.users
     sessions = getSessionsFromUser(username)
     col.update_one(
         {'username' : username},
         {'$set' : 
-            {'sessions' : [sessions] + [{'sessionID' : sessionID,
+            {'sessions' : sessions + [{'sessionID' : sessionID,
                                         'a' : a,
                                         'b' : b,
                                         'b2' : b2,
-                                        'k' : k}] if sessions is not None else 
+                                        'k' : k,
+                                        'device': deviceID}] if sessions is not None else 
                                     [{'sessionID' : sessionID,
                                         'a' : a,
                                         'b' : b,
                                         'b2' : b2,
-                                        'k' : k}] 
+                                        'k' : k,
+                                        'device' : deviceID}] 
             }
+        }
+    )
+def deleteSession(username, sessionID):
+    currentSessions = getSessionsFromUser(username)
+    if currentSessions is None:
+        return
+    session = None
+    for sessionDict in currentSessions:
+        if sessionDict['sessionID'] == sessionID:
+            session = sessionDict
+    if session is None:
+        return
+    col = db.users
+    col.update_one(
+        {'username' : username},
+        {'$set' : 
+            {'sessions' : [s for s in currentSessions if not (s == session)]}
         }
     )
 
@@ -78,12 +97,13 @@ def editSessionInts(username, sessionID, a, b, b2):
         return False
     return False
 
-def editSessionKey(username, sessionID, k):
+def editSessionKey(username, sessionID, k, deviceID):
     foundSessions = getSessionsFromUser(username)
     if foundSessions:
         for sessionDict in foundSessions:
             if sessionDict['sessionID'] == sessionID:
                 sessionDict['k'] = k
+                sessionDict['device'] = deviceID
                 return True
     else:
         return False
@@ -303,8 +323,11 @@ def getUsersForTicker(symbol):
     tickers = db.tickers.find(
         {'symbol' : symbol}
     )
-    foundUsers = tickers.next()['users']
-    return foundUsers
+    try:
+        foundUsers = tickers.next()['users']
+        return foundUsers
+    except StopIteration:
+        return []
     # print the users out for that ticker
     # pprint(foundUsers)
 # below is a test case for getUsersForTicker, to see how it works.

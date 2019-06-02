@@ -39,9 +39,9 @@ def login_get_b_handler():
 
 @app.route('/login/get_m2', methods=['GET', 'POST'])
 def login_get_m2_handler():
-    throw_if_invalid_request(request, ['username', 'm1', 'hnonce'])
+    throw_if_invalid_request(request, ['username', 'm1', 'session_id', 'device_id'])
     content = request.get_json()
-    m2 = server.validate_user_session(content['username'], content['hnonce'], content['m1'])
+    m2 = server.validate_user_session(content['username'], content['session_id'], content['m1'], content['device_id'])
     return jsonify({'m2': m2})
 
 @app.route('/login/terminate', methods=['GET', 'POST'])

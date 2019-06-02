@@ -41,7 +41,7 @@ class BackendServer:
         return (self.login_lib.bytesToHex(B_bytes),
                 self.login_lib.bytesToHex(n_bytes))
 
-    def validate_user_session(self, username, h_hex, mv_hex):
+    def validate_user_session(self, username, h_hex, mv_hex, deviceID):
         if(not database.userExists(username)):
             return bytearray()
         h = self.login_lib.hexToBytes(h_hex)
@@ -58,21 +58,13 @@ class BackendServer:
         mv = self.login_lib.hexToBytes(mv_hex)        
         if (mv != m1):
             return "Not equal"
-        database.editSessionKey(username, base64.b64encode(h), base64.b64encode(sk))
+        database.editSessionKey(username, base64.b64encode(h), base64.b64encode(sk), deviceID)
         return self.login_lib.bytesToHex(m2)
 
     def terminate_user_session(self, username, session):
         session_id = base64.b64encode(self.login_lib.hexToBytes(session))
-        print("Username: " + username, file=sys.stderr)
-        print("Session ID: " + str(session_id), file=sys.stderr)
-        print("before delete", file=sys.stderr)
-        try:
-            database.deleteSession(username, session_id)
-        except Exception as e:
-            print(e, file=sys.stderr)
-            raise e
-        print("after delete", file=sys.stderr)        
-    
+        database.deleteSession(username, session_id)
+            
     def get_tickers(self):
         return database.getTickers()
 

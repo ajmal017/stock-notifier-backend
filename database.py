@@ -97,12 +97,13 @@ def editSessionInts(username, sessionID, a, b, b2):
         return False
     return False
 
-def editSessionKey(username, sessionID, k):
+def editSessionKey(username, sessionID, k, deviceID):
     foundSessions = getSessionsFromUser(username)
     if foundSessions:
         for sessionDict in foundSessions:
             if sessionDict['sessionID'] == sessionID:
                 sessionDict['k'] = k
+                sessionDict['device'] = deviceID
                 return True
     else:
         return False
@@ -322,8 +323,11 @@ def getUsersForTicker(symbol):
     tickers = db.tickers.find(
         {'symbol' : symbol}
     )
-    foundUsers = tickers.next()['users']
-    return foundUsers
+    try:
+        foundUsers = tickers.next()['users']
+        return foundUsers
+    except StopIteration:
+        return []
     # print the users out for that ticker
     # pprint(foundUsers)
 # below is a test case for getUsersForTicker, to see how it works.

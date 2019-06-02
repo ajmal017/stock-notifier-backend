@@ -2,6 +2,8 @@
 #from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+import first_time
+import time
 
 chrome_options = Options()
 
@@ -14,8 +16,14 @@ chrome_options.add_argument("--disable-extensions")
 def getStockData(symbols):
     problems = open("not_working.txt", "w")
     stockData = {}
-    driver = webdriver.Chrome(chrome_options=chrome_options)
+    y = 0
+    driver = webdriver.Chrome(executable_path='./chromedriver.exe', chrome_options=chrome_options)
     for sym in symbols:
+        y += 1
+        if y == 10:
+            driver = webdriver.Chrome(executable_path='./chromedriver.exe', chrome_options=chrome_options)
+            y = 0
+        print(sym)
         url = "https://www.stockconsultant.com/consultnow/basicplus.cgi?symbol=" + sym
         supports = []
         resistances = []
@@ -25,6 +33,8 @@ def getStockData(symbols):
         except Exception:
             print("Error: cannot pull webpage of " + sym)
             continue
+
+        #print(url)
 
         for x in range(8, 17):
             try:
@@ -81,5 +91,5 @@ beaut_soup = BeautifulSoup(html_page, 'html.parser')
 """
 
 if __name__ == "__main__":
-    data = getStockData(["AMD", "NVDA", "INTL"])
+    data = getStockData(first_time.tickers)
     print(data)

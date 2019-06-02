@@ -80,7 +80,7 @@ def deleteSession(username, sessionID):
     col.update_one(
         {'username' : username},
         {'$set' : 
-            {'sessions' : list(set(currentSessions) - set(session))}
+            {'sessions' : [s for s in currentSessions if not (s == session)]}
         }
     )
 

@@ -40,7 +40,7 @@ class ServerLoginLibrary:
         return (b_bytes, B_bytes, n_bytes, h_bytes)
 
     def generate_sk(self, un, A_bytes, b_bytes, B_bytes, s_bytes, v_bytes):
-        username = (c_char * 80).from_buffer(un)
+        username = (c_char * len(un)).from_buffer(bytearray(un, 'ascii'))
         up = c_char_p(addressof(username))
         A = (c_ubyte * self.byte_size).from_buffer_copy(A_bytes)
         b = (c_ubyte * self.byte_size).from_buffer_copy(b_bytes)

@@ -147,7 +147,7 @@ def addTickersToUser(username, tickers):
     col.update_one(
         {'username' : username},
         {'$set' : 
-            {'tickers' : currentTickers + tickers}
+            {'tickers' : list(set(currentTickers + tickers))}
         }
     )
     for symbol in tickers:
@@ -381,6 +381,10 @@ def getResistancesForTicker(symbol):
     return foundResistances
 
 def getRecordForTicker(symbol):
-    return db.tickers.find(
+    cursor = db.tickers.find(
         {'symbol' : symbol}
     )
+    try:
+        return cursor.next()
+    except StopIteration:
+        return None

@@ -55,22 +55,24 @@ def login_terminate_handler():
 def get_all_tickers():
     return jsonify(server.get_tickers())
 
-@app.route('/user_tickers')
+@app.route('/user_tickers', methods=['GET', 'POST'])
 def get_user_tickers():
     throw_if_invalid_request(request, ['username', 'session_id'])
     content = request.get_json()
     data = server.get_user_tickers(content['username'], content['session_id'])
-    return jsonfiy(data)
+    return jsonify(data)
     
-@app.route('/add_ticker')
+@app.route('/add_ticker', methods=['GET', 'POST'])
 def add_user_to_ticker():
     throw_if_invalid_request(request, ['username', 'session_id', 'tickers'])
+    content = request.get_json()
     server.add_user_to_tickers(content['username'], content['session_id'], content['tickers'])
     return jsonify({'s': 's'})
 
-@app.route('/delete_ticker')
+@app.route('/delete_ticker', methods=['GET', 'POST'])
 def remove_user_from_ticker():
     throw_if_invalid_request(request, ['username', 'session_id', 'tickers'])
+    content = request.get_json()
     server.remove_user_from_tickers(content['username'], content['session_id'], content['tickers'])
     return jsonify({'s': 's'})
 

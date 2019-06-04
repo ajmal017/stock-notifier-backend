@@ -69,21 +69,38 @@ class BackendServer:
         return database.getTickers()
 
     def get_user_tickers(self, username, session):
-        key = database.getSessionK(username, session)
+        session_id = base64.b64encode(self.login_lib.hexToBytes(session))
+        key = database.getSessionK(username, session_id)
         if key is None:
             raise ValueError('User session not valid')
-        tickers = database.getTickersFromUser()
-        ticker_data = {}
+        tickers = database.getTickersFromUser(username)
+        ticker_data = []
+        for t in tickers:
+            data = database.getRecordForTicker(t)
+            data.pop('_id', None)
+            data.pop('users', None)
+            supports = []
+            for price, strength in data['supports']:
+                supports.append({'price': price, 'strength': strength})
+            data['supports'] = supports
+            resistances = []
+            for price, strength in data['resistances']:
+                resistances.append({'price': price, 'strength': strength})
+            data['resistances'] = resistances
+            ticker_data.append(data)
+            
         return ticker_data
 
     def add_user_to_tickers(self, username, session, tickers):
-        key = database.getSessionK(username, session)
+        session_id = base64.b64encode(self.login_lib.hexToBytes(session))
+        key = database.getSessionK(username, session_id)
         if key is None:
             raise ValueError('User session not valid')
         database.addTickersToUser(username, tickers)
 
     def remove_user_from_tickers(self, username, session, tickers):
-        key = database.getSessionK(username, session)
+        session_id = base64.b64encode(self.login_lib.hexToBytes(session))
+        key = database.getSessionK(username, session_id)
         if key is None:
             raise ValueError('User session not valid')
         database.removeTickersFromUser(username, tickers)

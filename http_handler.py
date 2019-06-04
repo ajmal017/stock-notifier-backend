@@ -9,9 +9,7 @@ server = BackendServer()
 def registration_handler():
     throw_if_invalid_request(request, ['username', 'user_salt', 'user_verifier'])
     content = request.get_json()
-    if (len(content['user_salt']) != 256 or
-        len(content['user_verifier']) != 256 or
-        len(content['username']) > 79):
+    if len(content['username']) > 79:
         return error(400, "Passed in info bad")
     if (server.register_user(content['username'], content['user_salt'], content['user_verifier'])):
         return jsonify({'r':'registered'})

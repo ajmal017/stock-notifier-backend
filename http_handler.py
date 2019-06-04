@@ -12,7 +12,7 @@ def registration_handler():
     if (len(content['user_salt']) != 256 or
         len(content['user_verifier']) != 256 or
         len(content['username']) > 79):
-        return error(400, 1)
+        return error(400, "Passed in info bad")
     if (server.register_user(content['username'], content['user_salt'], content['user_verifier'])):
         return jsonify({'r':'registered'})
     else:
@@ -83,6 +83,10 @@ def exception_handler(e):
 @app.errorhandler(ValueError)
 def valueerror_handler(e):
     return error(400, "Bad argument: "+str(e))
+
+@app.errorhandler(TypeError)
+def typeerror_handler(e):
+    return error(400, str(e))
 
 def throw_if_invalid_request(request, expected_fields):
     if (request.is_json is not True):

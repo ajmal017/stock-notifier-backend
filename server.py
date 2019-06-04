@@ -10,7 +10,7 @@ class BackendServer:
         
     def register_user(self, username, user_salt, user_verifier):
         if(database.userExists(username)):
-            return False
+            raise TypeError("Username Taken")
         database.newUser(username, [base64.b64encode(self.login_lib.hexToBytes(user_salt)),
                                     base64.b64encode(self.login_lib.hexToBytes(user_verifier)),
                                     b''], [])
@@ -18,13 +18,13 @@ class BackendServer:
 
     def get_user_salt(self, username):
         if(not database.userExists(username)):
-            return ""
+            raise TypeError("Username does not exist")
         login_data = database.getLoginDataFromUser(username)
         return self.login_lib.bytesToHex(base64.b64decode(login_data[0]))
 
     def create_user_session(self, username, a_hex):
         if(not database.userExists(username)):
-            return ("", "")
+            raise TypeError("Username does not exist")
         login_data = database.getLoginDataFromUser(username)
         b_bytes, B_bytes, n_bytes, h_bytes = self.login_lib.generate_b(base64.b64decode(login_data[1]))
         currentSessions = database.getSessionsFromUser(username)
@@ -43,7 +43,7 @@ class BackendServer:
 
     def validate_user_session(self, username, h_hex, mv_hex, deviceID):
         if(not database.userExists(username)):
-            return bytearray()
+            raise TypeError("Username does not exist")
         h = self.login_lib.hexToBytes(h_hex)
         session = database.getSessionInts(username, base64.b64encode(h))
         if (session is None):
@@ -57,7 +57,7 @@ class BackendServer:
                                                 base64.b64decode(login_data[1]))
         mv = self.login_lib.hexToBytes(mv_hex)        
         if (mv != m1):
-            return "Not equal"
+            raise TypeError("Invalid Password")
         database.editSessionKey(username, base64.b64encode(h), base64.b64encode(sk), deviceID)
         return self.login_lib.bytesToHex(m2)
 

@@ -1,0 +1,4 @@
+pymongo
+selenium
+flask
+alpha_vantage

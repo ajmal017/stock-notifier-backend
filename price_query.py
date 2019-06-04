@@ -2,13 +2,16 @@ from alpha_vantage.timeseries import TimeSeries
 import sys
 import json
 
-def curr_price_query(stocks):
-    ts = TimeSeries(key="H3YZEN6PT1LGBV6U")
+def curr_price_query(stocks, k):
+    ts = TimeSeries(key=k)
     stock_dict = {}
     for stock in stocks:
-        data, metadata = ts.get_intraday(symbol=stock, interval="1min", outputsize="compact")
-        print(list(data.values())[0]["1. open"])
-        stock_dict[stock] = list(data.values())[0]["1. open"]
+        try:
+            data, metadata = ts.get_intraday(symbol=stock, interval="1min", outputsize="compact")
+            stock_dict[stock] = list(data.values())[0]["1. open"]
+        except Exception as e:
+            print(e)
+            print(stock)
     print(stock_dict)
     return stock_dict
 

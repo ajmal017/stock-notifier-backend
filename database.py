@@ -86,25 +86,42 @@ def deleteSession(username, sessionID):
 
 def editSessionInts(username, sessionID, a, b, b2):
     foundSessions = getSessionsFromUser(username)
+    set = False
+    col = db.users
     if foundSessions:
         for sessionDict in foundSessions:
             if sessionDict['sessionID'] == sessionID:
                 sessionDict['a'] = a
                 sessionDict['b'] = b
                 sessionDict['b2'] = b2
-                return True
+                set = True
+        col.update_one(
+            {'username' : username},
+            {'$set' : 
+                {'sessions' : [s for s in foundSessions]}
+            }
+        )
+        return set
     else:
         return False
     return False
 
-def editSessionKey(username, sessionID, k, deviceID):
+def editSessionKey(username, sessionID, k):
     foundSessions = getSessionsFromUser(username)
+    set = False
+    col = db.users
     if foundSessions:
         for sessionDict in foundSessions:
             if sessionDict['sessionID'] == sessionID:
                 sessionDict['k'] = k
-                sessionDict['device'] = deviceID
-                return True
+                set = True
+        col.update_one(
+            {'username' : username},
+            {'$set' : 
+                {'sessions' : [s for s in foundSessions]}
+            }
+        )
+        return set
     else:
         return False
     return False
@@ -323,11 +340,8 @@ def getUsersForTicker(symbol):
     tickers = db.tickers.find(
         {'symbol' : symbol}
     )
-    try:
-        foundUsers = tickers.next()['users']
-        return foundUsers
-    except StopIteration:
-        return []
+    foundUsers = tickers.next()['users']
+    return foundUsers
     # print the users out for that ticker
     # pprint(foundUsers)
 # below is a test case for getUsersForTicker, to see how it works.

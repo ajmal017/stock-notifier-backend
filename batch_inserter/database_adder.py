@@ -44,13 +44,13 @@ def add_tickers(sym_list, names_list):
                 prices = price_query.curr_price_query(syms, keys.price_keys[ki])                
             except Exception as e:
                 print(e)
-                time.sleep(100)
+                time.sleep(10)
             finally:
                 ki = ki + 1
                 if ki == len(keys.price_keys):
                     ki = 0
                     break
-                    time.sleep(100)
+                    time.sleep(10)
         for s, n in current:
             if s not in sup_res or s not in prices:
                 not_working.append(s)

@@ -21,7 +21,7 @@ def getStockData(symbols):
     for sym in symbols:
         y += 1
         if y == 10:
-            driver = webdriver.Chrome(executable_path='./chromedriver.exe', chrome_options=chrome_options)
+            driver = webdriver.Chrome(chrome_options=chrome_options)
             y = 0
         print(sym)
         url = "https://www.stockconsultant.com/consultnow/basicplus.cgi?symbol=" + sym

@@ -64,5 +64,5 @@ def add_tickers(sym_list, names_list):
     return not_working
         
 if __name__ == "__main__":
-    not_working = add_tickers(first_time.tickers, first_time.names)
+    not_working = add_tickers(first_time.tickers[2800:], first_time.names[2800:])
     print(not_working)

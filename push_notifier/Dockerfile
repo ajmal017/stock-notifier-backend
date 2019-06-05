@@ -12,12 +12,13 @@ ENV DISPLAY=:99
 COPY push_notifier/requirements.txt /server
 
 RUN pip install -r requirements.txt
+RUN pip install awscli
 
 COPY database.py /server
 COPY scraper.py /server
 COPY price_query.py /server
 COPY push_notifier/push_notifier.py /server
-COPY keys.py /server
+COPY push_notifier/start.sh /server
 
 # Run server.py when the container launches
-CMD ["python", "push_notifier.py", "['AMD', 'GOOG', 'NFLX', 'AAPL']"]
+CMD ["/server/start.sh"]

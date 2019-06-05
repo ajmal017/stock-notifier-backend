@@ -4,8 +4,9 @@ sys.path.append("..")
 import database
 import time
 import price_query
-import keys
 import datetime
+import ast
+import os
 
 def should_eval():
     open_time = datetime.time(13,30)
@@ -22,7 +23,7 @@ def get_devices_for_sym(sym):
             device_sessions.append((s['device'], s['k']))
     return list(set(device_sessions))
 
-def poll_tickers_and_push(syms):
+def poll_tickers_and_push(syms, keys):
     print("Checking symbols "+str(syms))
     sup_res_dict = {}
     for sym in syms:
@@ -54,11 +55,11 @@ def poll_tickers_and_push(syms):
         for sym in syms:
             try:
                 print(sym)
-                price = price_query.curr_price_query([sym], keys.price_keys[ki])
+                price = price_query.curr_price_query([sym], keys[ki])
                 npk = npk+1
                 if npk == 5:
                     ki = ki + 1
-                    if ki == len(keys.price_keys):
+                    if ki == len(keys):
                         ki = 0
                         
                 if len(price) == 0:
@@ -99,6 +100,7 @@ def poll_tickers_and_push(syms):
 
 
 if __name__ == "__main__":
+    keys = ast.literal_eval(os.environ['ALPHA_VANTAGE_KEYS'])
     supported_tickers = [s['symbol'] for s in database.getTickers()]
     if len(sys.argv) == 1:
         print("Not enough arguments")
@@ -108,7 +110,7 @@ if __name__ == "__main__":
             tickers = list(set(tickers))
             sup_tickers_set = set(supported_tickers)
             available_tickers = [sym for sym in tickers if sym in sup_tickers_set]
-            poll_tickers_and_push(available_tickers)
+            poll_tickers_and_push(available_tickers, keys)
         else:
             print("One argument given but not a list")
     elif len(sys.argv) == 3:
@@ -119,4 +121,4 @@ if __name__ == "__main__":
         elif begin < 0 or end > len(supported_tickers):
             print("Two ints given but invalid ranges")
         else:
-            poll_tickers_and_push(supported_tickers[begin:end])
+            poll_tickers_and_push(supported_tickers[begin:end], keys)

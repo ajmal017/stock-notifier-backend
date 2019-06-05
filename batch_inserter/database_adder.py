@@ -56,7 +56,7 @@ def add_tickers(sym_list, names_list, price_keys):
             if s not in sup_res or s not in prices:
                 not_working.append(s)
                 continue
-            database.addTicker(s, n, sup_res[s]['Supports'], sup_res[s]['Resistances'], [], last=prices[s])
+            database.addTicker(s, n, sup_res[s]['Supports'], sup_res[s]['Resistances'], ['alden', 'brian'], last=prices[s])
         index = index + 5
 
     print(not_working)
@@ -66,5 +66,5 @@ def add_tickers(sym_list, names_list, price_keys):
         
 if __name__ == "__main__":
     keys = ast.literal_eval(os.environ['ALPHA_VANTAGE_KEYS'])
-    not_working = add_tickers(first_time.tickers[2800:], first_time.names[2800:], keys)
+    not_working = add_tickers(first_time.tickers, first_time.names, keys)
     print(not_working)

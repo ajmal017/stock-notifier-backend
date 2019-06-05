@@ -41,7 +41,7 @@ def newUser(username, loginData, tickers):
 def getUsers():
     col = db.users
     listOfUsers = list(col.find({}))
-    for UserDict in listOfTickers:
+    for userDict in listOfTickers:
         del userDict['loginData']
         del userDict['tickers']
         del userDict['sessions']

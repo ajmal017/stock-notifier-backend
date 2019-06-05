@@ -5,10 +5,11 @@ import database
 import price_query
 import scraper
 import time
-import keys
 import datetime as dt
+import ast
+import os
 
-def add_tickers(sym_list, names_list):
+def add_tickers(sym_list, names_list, price_keys):
     with open('not_working.txt') as f:
         lines = f.read().splitlines()
     both_list = list(zip(sym_list, names_list))
@@ -41,13 +42,13 @@ def add_tickers(sym_list, names_list):
         while len(prices) == 0:
             try:
                 print(ki)
-                prices = price_query.curr_price_query(syms, keys.price_keys[ki])                
+                prices = price_query.curr_price_query(syms, price_keys[ki])                
             except Exception as e:
                 print(e)
                 time.sleep(10)
             finally:
                 ki = ki + 1
-                if ki == len(keys.price_keys):
+                if ki == len(price_keys):
                     ki = 0
                     break
                     time.sleep(10)
@@ -64,5 +65,6 @@ def add_tickers(sym_list, names_list):
     return not_working
         
 if __name__ == "__main__":
-    not_working = add_tickers(first_time.tickers[2800:], first_time.names[2800:])
+    keys = ast.literal_eval(os.environ['ALPHA_VANTAGE_KEYS'])
+    not_working = add_tickers(first_time.tickers[2800:], first_time.names[2800:], keys)
     print(not_working)

@@ -28,6 +28,7 @@ RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`cu
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/ && rm /tmp/chromedriver.zip
 
 RUN pip install selenium
+RUN pip install awscli
 
 # set display port to avoid crash
 ENV DISPLAY=:99
@@ -42,7 +43,7 @@ COPY price_query.py /server
 COPY first_time.py /server
 COPY batch_inserter/database_adder.py /server
 COPY batch_inserter/not_working.txt /server
-COPY keys.py /server
+COPY batch_inserter/start.sh /server
 
 # Run server.py when the container launches
-CMD ["python", "database_adder.py"]
+CMD ["/server/start.sh"]

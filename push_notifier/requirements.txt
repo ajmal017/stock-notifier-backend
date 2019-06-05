@@ -1,0 +1,2 @@
+pymongo
+alpha_vantage

@@ -77,6 +77,14 @@ def newSession(username, sessionID, a, b, b2, k, deviceID):
             }
         }
     )
+
+
+def deleteAllSessions(username):
+    all_sessions = getSessionsFromUser(username)
+    for session in all_sessions:
+        deleteSession(username, session['sessionID'])
+    
+
 def deleteSession(username, sessionID):
     currentSessions = getSessionsFromUser(username)
     if currentSessions is None:

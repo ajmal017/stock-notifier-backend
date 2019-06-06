@@ -38,6 +38,17 @@ def newUser(username, loginData, tickers):
 #         b'6ghUn0TNggQla31n3c31uvgjJdLnage2KIoW1h3uyJ2QJpVRRZ11ue1z826WjPudIemUpzs7o84umeKFZFB34a18MfDpnNwqMSPf0xPgkWGt5i8oeWTWqho8bH1N4vFk'],
 #         ['AMD', 'MSFT', 'SQ'])
 
+def getUsers():
+    col = db.users
+    listOfUsers = list(col.find({}))
+    for userDict in listOfUsers:
+        del userDict['loginData']
+        del userDict['tickers']
+        del userDict['sessions']
+        del userDict['_id']
+    return listOfUsers
+
+
 # returns True if exists else false
 def userExists(username):
     sessions = db.users.find(

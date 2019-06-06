@@ -1,21 +1,24 @@
-#import urllib2
-#from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import first_time
-import time
 
+#Chrome options to eliminate overhead associated with ma
 chrome_options = Options()
-
 chrome_options.add_argument('--no-sandbox')
 chrome_options.add_argument("--disable-setuid-sandbox")
 chrome_options.add_argument("--headless")
 chrome_options.add_argument("--disable-gpu")
 chrome_options.add_argument("--disable-extensions")
 
+"""
+@param -- symbols, a list of stock tickers
+@return -- a dictionary mapping tickers to their support and resistance numbers
+"""
 def getStockData(symbols):
+#debugging code
 #    problems = open("not_working.txt", "w")
     stockData = {}
+    #y is used to manually create a new driver every 10 symbols to prevent throttling from stockconsultant
     y = 0
     driver = webdriver.Chrome(chrome_options=chrome_options)
     for sym in symbols:
@@ -28,14 +31,14 @@ def getStockData(symbols):
         supports = []
         resistances = []
 
+        #use Chrome driver to get and generate the webpage for this specific symbol
         try:
             driver.get(url)
         except Exception:
             print("Error: cannot pull webpage of " + sym)
             continue
 
-        #print(url)
-
+        #extracts supports and resistances from specific offsets in the webpage
         for x in range(8, 17):
             try:
                 ele_string = "/html/body/div[@class='containerborder']/div[20]/div["+str(x)+"]"
@@ -51,10 +54,12 @@ def getStockData(symbols):
             elif len(text) > 0 and text[0] == '+':
                 resistances.append(text)
 
-
+        #skips to next symbol if there's nothing
         if len(supports) is 0  and len(resistances) is 0:
-            continue;
-                
+            continue
+
+
+        #adds supports and resistances and their respective strengths        
         supnums = []
         resnums = []
 
@@ -77,7 +82,8 @@ def getStockData(symbols):
             sups.append((sup.split()[2], sup.split()[-1]))
         for res in resistances:
             ress.append((res.split()[2], res.split()[-1]))
-        
+
+        #appends to dictionary
         stockData[sym] = {"Supports" : sups, "Resistances" : ress}
 
     driver.close()

@@ -2,9 +2,16 @@ from alpha_vantage.timeseries import TimeSeries
 import sys
 import json
 
+"""
+@param -- stocks, list of stock tickers
+          k, key to be used for AlphaVantage
+@return -- stock_dict, dictionary mapping stocks to their current price
+"""
 def curr_price_query(stocks, k):
     ts = TimeSeries(key=k)
     stock_dict = {}
+    #for each stock, gets the prices using AlphaVantage's TimeSeries and then stores
+    #the most recent stock price in stock_dict
     for stock in stocks:
         try:
             data, metadata = ts.get_intraday(symbol=stock, interval="1min", outputsize="compact")

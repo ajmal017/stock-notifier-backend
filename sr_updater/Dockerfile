@@ -42,4 +42,4 @@ COPY price_query.py /server
 COPY sr_updater/sr_updater.py /server
 
 # Run server.py when the container launches
-CMD ["python", "sr_updater.py"]
+CMD ["python", "sr_updater.py", "['AMD', 'LOVE', 'SLAB', 'AAPL', 'GOOG', 'SYMC', 'FB', 'TSLA', 'QCOM']"]

@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import first_time
 
 #Chrome options to eliminate overhead associated with ma
 chrome_options = Options()
@@ -96,6 +95,6 @@ html_page = urllib2.urlopen(test_page)
 beaut_soup = BeautifulSoup(html_page, 'html.parser')
 """
 
-if __name__ == "__main__":
-    data = getStockData(first_time.tickers)
-    print(data)
+#if __name__ == "__main__":
+#    data = getStockData(first_time.tickers)
+#    print(data)

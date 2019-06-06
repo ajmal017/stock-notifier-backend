@@ -60,11 +60,8 @@ def add_tickers(sym_list, names_list, price_keys):
         index = index + 5
 
     print(not_working)
-    p = open("broken.txt")
-    p.write(str(not_working))
     return not_working
         
 if __name__ == "__main__":
     keys = ast.literal_eval(os.environ['ALPHA_VANTAGE_KEYS'])
     not_working = add_tickers(first_time.tickers, first_time.names, keys)
-    print(not_working)

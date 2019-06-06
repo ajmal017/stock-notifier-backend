@@ -6,7 +6,7 @@ The login architecture depends on GMP and libsodium, with zip files included.
 
 ## Build
 
-Download the zip and run "docker build --tag=stock_server ."
+The server has 4 parts, 3 which run continuously and 1 on the intialization of the server
 
 ## Run
   

@@ -32,7 +32,7 @@ RUN pip install selenium
 # set display port to avoid crash
 ENV DISPLAY=:99
 
-COPY batch_inserter/requirements.txt /server
+COPY sr_updater/requirements.txt /server
 
 RUN pip install -r requirements.txt
 
@@ -40,9 +40,7 @@ COPY database.py /server
 COPY scraper.py /server
 COPY price_query.py /server
 COPY first_time.py /server
-COPY batch_inserter/database_adder.py /server
-COPY batch_inserter/not_working.txt /server
-COPY keys.py /server
+COPY sr_updater/sr_updater.py /server
 
 # Run server.py when the container launches
-CMD ["python", "database_adder.py"]
+CMD ["python", "sr_updater.py"]

@@ -1,24 +1,18 @@
 import sys
 sys.path.append("..")
-import first_time
-import database
-import price_query
 import scraper
-import time
-import keys
-import datetime as dt
+import database
+import ast
 
-def update_db():
-    currently_in = database.getTickers()
-    to_update = [s['symbol'] for s in currently_in]
+def update_db(syms):
     
     index = 0
-    length = len(to_update)
+    length = len(syms)
     while index < length:
         end = index + 30
         if end > length:
             end = length
-        current = to_update[index:end]
+        current = syms[index:end]
         print("Going to update "+str(current))
         sup_res = scraper.getStockData(current)
 
@@ -35,4 +29,10 @@ def update_db():
 
 
 if __name__ == "__main__":
-    update_db()
+    if len(sys.argv) == 1:
+        currently_in = database.getTickers()
+        to_update = [s['symbol'] for s in currently_in]
+        update_db(to_update)
+    else:
+        tickers = ast.literal_eval(sys.argv[1])
+        update_db(tickers)

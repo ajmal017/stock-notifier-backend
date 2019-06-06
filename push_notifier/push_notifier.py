@@ -3,6 +3,7 @@ import ast
 sys.path.append("..")
 import database
 import time
+import notifications
 import price_query
 import datetime
 import ast
@@ -56,7 +57,7 @@ def poll_tickers_and_push(syms, av_keys, f_key):
         
         
         for sym in syms:
-            try:
+#            try:
                 print(sym)
                 price = price_query.curr_price_query([sym], av_keys[ki])
                 npk = npk+1
@@ -77,31 +78,31 @@ def poll_tickers_and_push(syms, av_keys, f_key):
                     if price_amt < s[0] and price_amt < s[1]:
                         # Notification framework
                         notif_string = "Symbol "+sym+" has broken support "+str(s[1])+" of strength "+str(s[2])+" and is currently at "+str(price_amt)
-                        notifications.sendNotifications(devices, sym+" Support Broken", notif_string, f_key)
+                        notifications.sendNotification(test_devices, sym+" Support Broken", notif_string, f_key)
                         break
                     elif price_amt < s[0] and price_amt > s[1]:
                         # Notification framework
                         notif_string = "Symbol "+sym+" is reaching support "+str(s[1])+" of strength "+str(s[2])+" and is currently at "+str(price_amt)
-                        notifications.sendNotifications(devices, sym+" Support Near", notif_string, f_key)
+                        notifications.sendNotification(test_devices, sym+" Support Near", notif_string, f_key)
                         break
                     
                 for r in sup_res_dict[sym][1]:
                     if price_amt > r[0] and price_amt > r[1]:
                         # Notification framework
                         notif_string = "Symbol "+sym+" has broken resistance "+str(r[1])+" of strength "+str(r[2])+" and is currently at "+str(price_amt)
-                        notifications.sendNotifications(devices, sym+" Resistance Broken", notif_string, f_key)
+                        notifications.sendNotification(test_devices, sym+" Resistance Broken", notif_string, f_key)
                         break
                     elif price_amt > r[0] and price_amt < r[1]:
                         # Notification framework
                         notif_string = "Symbol "+sym+" is reaching resistance "+str(r[1])+" of strength "+str(r[2])+" and is currently at "+str(price_amt)
-                        notifications.sendNotifications(devices, sym+" Resistance Near", notif_string, f_key)
+                        notifications.sendNotification(test_devices, sym+" Resistance Near", notif_string, f_key)
                         break
 
-                notifications.sendNotifications(test_devices, sym+" test notification", "Current price of "+sym+" is "+price[sym], f_key)
+                notifications.sendNotification(test_devices, sym+" test notification", "Current price of "+sym+" is "+price[sym], f_key)
                 
                     
-            except Exception as e:
-                print("An exception for "+sym+" was caught at "+str(datetime.datetime.utcnow().time())+": "+str(e))
+#            except Exception as e:
+#                print("An exception for "+sym+" was caught at "+str(datetime.datetime.utcnow().time())+": "+str(e))
 
         current_time = int(time.time())
         if current_time < next_time:

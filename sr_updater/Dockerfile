@@ -39,7 +39,6 @@ RUN pip install -r requirements.txt
 COPY database.py /server
 COPY scraper.py /server
 COPY price_query.py /server
-COPY first_time.py /server
 COPY sr_updater/sr_updater.py /server
 
 # Run server.py when the container launches

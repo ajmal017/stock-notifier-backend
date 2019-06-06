@@ -40,7 +40,7 @@ RUN pip install -r requirements.txt
 COPY database.py /server
 COPY scraper.py /server
 COPY price_query.py /server
-COPY first_time.py /server
+COPY batch_inserter/first_time.py /server
 COPY batch_inserter/database_adder.py /server
 COPY batch_inserter/not_working.txt /server
 COPY batch_inserter/start.sh /server

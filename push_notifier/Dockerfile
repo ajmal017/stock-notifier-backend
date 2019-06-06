@@ -17,6 +17,7 @@ RUN pip install awscli
 COPY database.py /server
 COPY scraper.py /server
 COPY price_query.py /server
+COPY notifications.py /server
 COPY push_notifier/push_notifier.py /server
 COPY push_notifier/start.sh /server
 

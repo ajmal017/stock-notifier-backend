@@ -15,12 +15,12 @@ WORKDIR /server
 RUN mkdir /clibs
 
 # GMP
-ADD gmp-6.1.2.tar.xz /clibs/
+ADD http_handler/gmp-6.1.2.tar.xz /clibs/
 RUN cd /clibs/gmp-6.1.2/ &&  ./configure --prefix=$HOME/.local && \
     make && make install && rm -rf /clibs/gmp-6.1.2
 
 # libSodium
-ADD libsodium-1.0.16.tar.gz /clibs/
+ADD http_handler/libsodium-1.0.16.tar.gz /clibs/
 RUN cd /clibs/libsodium-1.0.16/ &&  ./configure --prefix=$HOME/.local && \
     make && make install && rm -rf /clibs/libsodium-1.0.16
 
@@ -42,30 +42,27 @@ RUN apt-get install -yqq unzip
 RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
 RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/ && rm /tmp/chromedriver.zip
 
-RUN pip install selenium
-
 # set display port to avoid crash
 ENV DISPLAY=:99
 
 # server login
 RUN mkdir /clibs/server_login
-COPY server_login.cpp /clibs/server_login
-COPY server_login.h /clibs/server_login
-COPY Makefile /clibs/server_login
+COPY http_handler/server_login.cpp /clibs/server_login
+COPY http_handler/server_login.h /clibs/server_login
+COPY http_handler/Makefile /clibs/server_login
 RUN cd /clibs/server_login && make && echo $(ls) && mv server_lib.so /server
 
-COPY requirements.txt /server
+COPY http_handler/requirements.txt /server
 
 RUN pip install -r requirements.txt
 
 COPY database.py /server
 COPY scraper.py /server
-COPY http_handler.py /server
-COPY first_time.py /server
+COPY http_handler/http_handler.py /server
 
 # Copy the server python files into the server directory
-COPY server.py /server
-COPY server_login.py /server
+COPY http_handler/server.py /server
+COPY http_handler/server_login.py /server
 
 
 # Run server.py when the container launches

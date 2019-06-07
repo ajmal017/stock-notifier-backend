@@ -40,6 +40,7 @@ COPY database.py /server
 COPY scraper.py /server
 COPY price_query.py /server
 COPY sr_updater/sr_updater.py /server
+COPY sr_updater/start.sh /server
 
 # Run server.py when the container launches
-CMD ["python", "sr_updater.py", "['AMD', 'LOVE', 'SLAB', 'AAPL', 'GOOG', 'SYMC', 'FB', 'TSLA', 'QCOM']"]
+CMD ["/server/start.sh"]

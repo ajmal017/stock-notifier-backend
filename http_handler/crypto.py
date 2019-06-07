@@ -12,7 +12,7 @@ AES_RAND_SIZE = 16
 class CryptoLib:
     def __init__(self, key):
         rsa_private = RSA.importKey(key)
-        self.decrypter = PKCS1_OAEP.new(rsa_private, hashAlgo=SHA256, mgfunc= lambda x, y: pss.MGF1(x, y, SHA1))
+        self.decrypter = PKCS1_OAEP.new(rsa_private, hashAlgo=SHA256, mgfunc= lambda x, y: pss.MGF1(x, y, SHA256))
         self.signer = PKCS1_v1_5.new(rsa_private)
 
     def rsa_decrypt(self, ciphertext):

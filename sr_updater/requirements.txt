@@ -1,3 +1,4 @@
 pymongo
 selenium
 alpha_vantage
+awscli

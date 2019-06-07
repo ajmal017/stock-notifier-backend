@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify, abort
 from server import BackendServer
 import sys
+import os
 
 app = Flask(__name__)
-server = BackendServer()
+server = BackendServer(os.environ['SERVER_PRIVATE_KEY'])
 
 @app.route('/register', methods=['GET', 'POST'])
 def registration_handler():
@@ -11,10 +12,16 @@ def registration_handler():
     content = request.get_json()
     if len(content['username']) > 79:
         return error(400, "Passed in info bad")
-    if (server.register_user(content['username'], content['user_salt'], content['user_verifier'])):
-        return jsonify({'r':'registered'})
+    if 'use_crypto' in content:
+        if (server.register_user_encrypted(content['username'], content['user_salt'], content['user_verifier'])):
+            return jsonify({'r':'registered'})
+        else:
+            return error(400, 0)
     else:
-        return error(400, 0)
+        if (server.register_user(content['username'], content['user_salt'], content['user_verifier'])):
+            return jsonify({'r':'registered'})
+        else:
+            return error(400, 0)
 
 @app.route('/login/get_salt', methods=['GET', 'POST'])
 def login_get_salt_handler():
@@ -30,7 +37,10 @@ def login_get_salt_handler():
 def login_get_b_handler():
     throw_if_invalid_request(request, ['username', 'big_a'])
     content = request.get_json()
-    B, n = server.create_user_session(content['username'], content['big_a'])
+    if 'use_crypto' in content:
+        B, n = server.create_user_session_encrypted(content['username'], content['big_a'])
+    else:
+        B, n = server.create_user_session(content['username'], content['big_a'])
     if len(B) == 0:
         return error(400, 0)
     return jsonify({'big_b': B, 'nonce': n})
@@ -39,7 +49,10 @@ def login_get_b_handler():
 def login_get_m2_handler():
     throw_if_invalid_request(request, ['username', 'm1', 'session_id', 'device_id'])
     content = request.get_json()
-    m2 = server.validate_user_session(content['username'], content['session_id'], content['m1'], content['device_id'])
+    if 'use_crypto' in content:
+        m2 = server.validate_user_session_encrypted(content['username'], content['session_id'], content['m1'], content['device_id'])
+    else:
+        m2 = server.validate_user_session(content['username'], content['session_id'], content['m1'], content['device_id'])
     return jsonify({'m2': m2})
 
 @app.route('/login/terminate', methods=['GET', 'POST'])

@@ -1,9 +1,10 @@
 from pymongo import MongoClient
 # pprint library is used to make the output look more pretty
 from pprint import pprint
+import os
 
 # connect to MongoDB, TODO: Update to Alden's machine
-client = MongoClient("mongodb://Anykze:Rajivisgay123@notifier-shard-00-00-wcy1w.azure.mongodb.net:27017,notifier-shard-00-01-wcy1w.azure.mongodb.net:27017,notifier-shard-00-02-wcy1w.azure.mongodb.net:27017/test?ssl=true&replicaSet=Notifier-shard-0&authSource=admin&retryWrites=true")
+client = MongoClient("mongodb://"+os.environ['DB_USERNAME']+":"+os.environ['DB_PASSWORD']+"@notifier-shard-00-00-wcy1w.azure.mongodb.net:27017,notifier-shard-00-01-wcy1w.azure.mongodb.net:27017,notifier-shard-00-02-wcy1w.azure.mongodb.net:27017/test?ssl=true&replicaSet=Notifier-shard-0&authSource=admin&retryWrites=true")
 db=client.stockNotifier
 
 # NOTE: Uncomment this for server status debugging
